@@ -6,7 +6,9 @@
 package codigo;
 
 import java.awt.GridLayout;
-import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 
 /**
  *
@@ -17,7 +19,7 @@ public class VentanaBuscaminas extends javax.swing.JFrame {
    int filas = 15;
    int columnas = 20;
    
-   JButton [][] arrayBotones = new JButton[filas][columnas];
+   Boton [][] arrayBotones = new Boton[filas][columnas];
     /**
      * Creates new form VentanaBuscaminas
      */
@@ -27,18 +29,32 @@ public class VentanaBuscaminas extends javax.swing.JFrame {
         getContentPane().setLayout(new GridLayout(filas, columnas));
         for (int i=0; i<filas; i++){
             for(int j=0; j<columnas; j++){
-                JButton boton = new JButton();
+                Boton boton = new Boton(i,j);
+                boton.setBorder(null);
                 getContentPane().add(boton);
                 arrayBotones[i][j]=boton;
                 boton.addMouseListener(new MouseAdapter(){
+                    @Override
                     public void mousePressed(MouseEvent evt){
+                        botonPulsado(evt);
                     }
                 }
                 );
             }
         }
     }
-
+    
+    //método que es llamado cada vez que se pulse cualquier botón
+    private void botonPulsado(MouseEvent e){
+        Boton miBoton = (Boton) e.getComponent();
+        if (e.getButton() == MouseEvent.BUTTON3){
+            miBoton.setText("?");
+        }
+    }
+    
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
