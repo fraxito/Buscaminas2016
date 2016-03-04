@@ -8,7 +8,7 @@ package codigo;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.util.Random;
 
 /**
  *
@@ -16,45 +16,93 @@ import java.awt.event.MouseEvent;
  */
 public class VentanaBuscaminas extends javax.swing.JFrame {
 
-   int filas = 15;
-   int columnas = 20;
-   
-   Boton [][] arrayBotones = new Boton[filas][columnas];
+    int filas = 15;
+    int columnas = 20;
+
+    Boton[][] arrayBotones = new Boton[filas][columnas];
+
     /**
      * Creates new form VentanaBuscaminas
      */
     public VentanaBuscaminas() {
         initComponents();
-        setSize(800,600);
+        setSize(800, 600);
         getContentPane().setLayout(new GridLayout(filas, columnas));
-        for (int i=0; i<filas; i++){
-            for(int j=0; j<columnas; j++){
-                Boton boton = new Boton(i,j);
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                Boton boton = new Boton(i, j);
                 boton.setBorder(null);
                 getContentPane().add(boton);
-                arrayBotones[i][j]=boton;
-                boton.addMouseListener(new MouseAdapter(){
+                arrayBotones[i][j] = boton;
+                boton.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mousePressed(MouseEvent evt){
+                    public void mousePressed(MouseEvent evt) {
                         botonPulsado(evt);
                     }
                 }
                 );
             }
         }
+        ponMinas(30);
+        cuentaMinas();
     }
-    
-    //método que es llamado cada vez que se pulse cualquier botón
-    private void botonPulsado(MouseEvent e){
-        Boton miBoton = (Boton) e.getComponent();
-        if (e.getButton() == MouseEvent.BUTTON3){
-            miBoton.setText("?");
+
+    private void ponMinas(int numeroMinas) {
+        Random r = new Random();
+        for (int i = 0; i < numeroMinas; i++) {
+            int f = r.nextInt(filas);
+            int c = r.nextInt(columnas);
+
+            arrayBotones[f][c].setMina(1);
+            arrayBotones[f][c].setText("m");
         }
     }
     
+    //cuentaMinas es un método que para cada botón calcula el numero de 
+    //minas que tiene alrededor
+    private void cuentaMinas(){
+    
+        int minas = 0;
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                if ((i > 0) && (j > 0) && (i < filas-1) && (j < columnas-1)) {
+                    minas = minas + arrayBotones[i - 1][j - 1].getMina();//la mina de arriba a la izquierda
+                    minas = minas + arrayBotones[i][j - 1].getMina();//la mina de arriba 
+                    minas = minas + arrayBotones[i + 1][j - 1].getMina();//la mina de arriba a la derecha
+
+                    minas = minas + arrayBotones[i - 1][j].getMina(); //la mina de la izquierda
+                    minas = minas + arrayBotones[i + 1][j].getMina(); //la mina de la derecha
+
+                    minas = minas + arrayBotones[i - 1][j + 1].getMina();//la mina de abajo a la izquierda
+                    minas = minas + arrayBotones[i][j + 1].getMina();//la mina de abajo 
+                    minas = minas + arrayBotones[i + 1][j + 1].getMina();//la mina de abajo a la derecha
+                }
+                arrayBotones[i][j].setNumeroMinasAlrededor(minas);
+                if(arrayBotones[i][j].getMina() == 0){
+                    arrayBotones[i][j].setText(String.valueOf(minas));
+                }
+                minas = 0; 
+            }
+        }
+        
+        
+        
+    }
     
     
     
+    
+    
+    
+
+    //método que es llamado cada vez que se pulse cualquier botón
+    private void botonPulsado(MouseEvent e) {
+        Boton miBoton = (Boton) e.getComponent();
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            miBoton.setText("?");
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
